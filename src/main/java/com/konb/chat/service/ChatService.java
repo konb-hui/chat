@@ -16,4 +16,12 @@ public interface ChatService {
      * @return 初始化结果
      */
     boolean initChat(User user);
+
+    /**
+     * @param user 用户
+     * @param toUser 聊天对象
+     * @param name 聊天名
+     * @return 添加结果
+     */
+    boolean addChat(User user, User toUser, String name);
 }
