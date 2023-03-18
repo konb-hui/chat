@@ -1,9 +1,12 @@
 package com.konb.chat.service.impl;
 
 import com.konb.chat.constant.CommonConstant;
+import com.konb.chat.entity.User;
+import com.konb.chat.service.ChatService;
 import com.konb.chat.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -31,6 +34,9 @@ public class UserServiceImpl implements UserService {
     @Value("${user.num.limit}")
     private int userNumLimit;
 
+    @Autowired
+    private ChatService chatService;
+
     @PostConstruct
     private void init() {
         users = new HashMap<>(userNumLimit);
@@ -54,7 +60,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean addUser(String ip, String name) {
+    public boolean addUser(User user) {
         if (users.size() >= userNumLimit) {
             return false;
         }
@@ -63,11 +69,14 @@ public class UserServiceImpl implements UserService {
             return false;
         }
         try (FileWriter fileWriter = new FileWriter(userFile, true); BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
-            if (users.size() > 0) {
+            String ip = user.getIp();
+            String name = user.getName();
+            if (users.size() > 0 && !users.containsKey(ip) && !users.containsValue(name)) {
                 bufferedWriter.newLine();
                 bufferedWriter.append(ip).append(CommonConstant.USER_SEPARATE).append(name);
                 bufferedWriter.flush();
                 users.put(ip, name);
+                return chatService.initChat(user);
             }
         } catch (IOException e) {
             e.printStackTrace();

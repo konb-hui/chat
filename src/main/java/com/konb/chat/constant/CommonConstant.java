@@ -8,4 +8,5 @@ package com.konb.chat.constant;
 
 public interface CommonConstant {
     String USER_SEPARATE = ":";
+    String UNDERLINE = "_";
 }

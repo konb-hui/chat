@@ -1,5 +1,7 @@
 package com.konb.chat.service;
 
+import com.konb.chat.entity.User;
+
 /**
  * @author konb
  * @version 1.0
@@ -11,9 +13,8 @@ public interface UserService {
     /**
      * 添加用户
      *
-     * @param ip ip
-     * @param name 名字
+     * @param user 用户
      * @return 添加结果
      */
-    boolean addUser(String ip, String name);
+    boolean addUser(User user);
 }
