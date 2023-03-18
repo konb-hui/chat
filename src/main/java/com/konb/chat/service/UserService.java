@@ -17,4 +17,12 @@ public interface UserService {
      * @return 添加结果
      */
     boolean addUser(User user);
+
+    /**
+     * 判断当前ip是否存在账号
+     *
+     * @param ip ip
+     * @return 查询结果
+     */
+    boolean checkUserIsExist(String ip);
 }

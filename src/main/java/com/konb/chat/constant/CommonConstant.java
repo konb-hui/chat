@@ -9,4 +9,8 @@ package com.konb.chat.constant;
 public interface CommonConstant {
     String USER_SEPARATE = ":";
     String UNDERLINE = "_";
+    String SUCCESS = "success";
+    String ERROR = "error";
+    int SUCCESS_CODE = 200;
+    int ERROR_CODE = 300;
 }

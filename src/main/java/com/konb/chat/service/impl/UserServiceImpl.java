@@ -85,6 +85,11 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
+    @Override
+    public boolean checkUserIsExist(String ip) {
+        return users.get(ip) != null;
+    }
+
     private File getUserFile() {
         File file = new File(userPath);
         if (!file.exists()) {
