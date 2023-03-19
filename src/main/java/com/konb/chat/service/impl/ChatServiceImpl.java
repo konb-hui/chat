@@ -1,6 +1,7 @@
 package com.konb.chat.service.impl;
 
 import com.konb.chat.constant.CommonConstant;
+import com.konb.chat.entity.ChatMessage;
 import com.konb.chat.entity.User;
 import com.konb.chat.service.ChatService;
 import org.slf4j.Logger;

@@ -1,8 +1,10 @@
 package com.konb.chat.handler;
 
 import com.alibaba.fastjson.JSON;
+import com.konb.chat.constant.CommonConstant;
 import com.konb.chat.entity.ChatMessage;
 import com.konb.chat.entity.User;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -11,17 +13,16 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author konb
  * @version 1.0
  * @date 2023/3/19 0:30
  */
+@Component
 public class MyHandler extends TextWebSocketHandler {
     private final Map<String, WebSocketSession> sessions = new HashMap<>();
 
@@ -31,21 +32,15 @@ public class MyHandler extends TextWebSocketHandler {
             return;
         }
         UriComponents uri = UriComponentsBuilder.fromUri(session.getUri()).build();
-        String userInfoStr = uri.getQueryParams().getFirst("userInfo");
-        if (!StringUtils.hasText(userInfoStr)) {
+        String name = uri.getQueryParams().getFirst("name");
+        if (!StringUtils.hasText(name)) {
             return;
         }
-        try {
-            userInfoStr = URLDecoder.decode(userInfoStr, String.valueOf(StandardCharsets.UTF_8));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        System.out.println(userInfoStr);
         User user = new User();
-        if (userInfoStr != null) {
-            user = JSON.parseObject(userInfoStr, User.class);
-            session.getAttributes().put("user", user.getUserKey());
-        }
+        user.setIp(Objects.requireNonNull(session.getRemoteAddress()).getAddress().getHostAddress());
+        user.setName(name);
+        System.out.println(user);
+        session.getAttributes().put("user", JSON.toJSONString(user));
         sessions.put(user.getUserKey(), session);
     }
 
@@ -53,19 +48,28 @@ public class MyHandler extends TextWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         System.out.println(message.getPayload());
         ChatMessage chatMessage = JSON.parseObject(message.getPayload(), ChatMessage.class);
-        String toUserKey = chatMessage.getToUser().getUserKey();
-        if (sessions.containsKey(toUserKey)) {
-            sessions.get(toUserKey).sendMessage(message);
+        if (CommonConstant.GPT_MODE == chatMessage.getMode()) {
+            User user = getUserFromSession(session);
+            if (user != null) {
+                sessions.get(user.getUserKey()).sendMessage(message);
+            }
         }
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
-        String user = (String) session.getAttributes().get("user");
-        sessions.remove(user);
+        User userFromSession = getUserFromSession(session);
+        if (userFromSession == null) {
+            return;
+        }
+        sessions.remove(userFromSession.getUserKey());
     }
 
     private User getUserFromSession(WebSocketSession session) {
+        String userStr = (String) session.getAttributes().get("user");
+        if (StringUtils.hasText(userStr)) {
+            return JSON.parseObject(userStr, User.class);
+        }
         return null;
     }
 }

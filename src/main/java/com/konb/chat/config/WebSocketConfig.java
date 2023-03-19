@@ -1,9 +1,8 @@
 package com.konb.chat.config;
 
 import com.konb.chat.handler.MyHandler;
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.*;
 
 /**
@@ -14,13 +13,10 @@ import org.springframework.web.socket.config.annotation.*;
 @Configuration
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
+    @Autowired
+    private MyHandler myHandler;
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(myHandler(), "/chat").setAllowedOrigins("*");;
-    }
-
-    @Bean
-    public WebSocketHandler myHandler() {
-        return new MyHandler();
+        registry.addHandler(myHandler, "/chat").setAllowedOrigins("*");;
     }
 }

@@ -10,6 +10,8 @@ import lombok.Data;
 @Data
 public class ChatMessage {
     private String message;
-    private User fromUser;
     private User toUser;
+    private int type;
+    private int mode;
+    private String id;
 }
