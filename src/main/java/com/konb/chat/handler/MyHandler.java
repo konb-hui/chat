@@ -42,11 +42,17 @@ public class MyHandler extends TextWebSocketHandler {
             return;
         }
         User user = new User();
-        user.setIp(Objects.requireNonNull(session.getRemoteAddress()).getAddress().getHostAddress());
         user.setName(name);
+        if (chatName.equals(name)) {
+            user.setIp("127.0.0.1");
+            session.getAttributes().put("user", JSON.toJSONString(user));
+            sessions.put(chatName, session);
+        } else {
+            user.setIp(Objects.requireNonNull(session.getRemoteAddress()).getAddress().getHostAddress());
+            session.getAttributes().put("user", JSON.toJSONString(user));
+            sessions.put(user.getUserKey(), session);
+        }
         System.out.println(user);
-        session.getAttributes().put("user", JSON.toJSONString(user));
-        sessions.put(user.getUserKey(), session);
     }
 
     @Override
