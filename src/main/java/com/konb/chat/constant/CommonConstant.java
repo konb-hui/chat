@@ -14,7 +14,8 @@ public interface CommonConstant {
     int SUCCESS_CODE = 200;
     int ERROR_CODE = 300;
     int SEND_MESSAGE = 0;
-    int ANSWER_MESSAGE = 1;
+    int USER_ANSWER_MESSAGE = 1;
+    int GPT_ANSWER_MESSAGE = 2;
     int USER_MODE = 0;
     int GPT_MODE = 1;
 }
