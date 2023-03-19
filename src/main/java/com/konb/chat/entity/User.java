@@ -1,5 +1,6 @@
 package com.konb.chat.entity;
 
+import com.konb.chat.constant.CommonConstant;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,4 +16,8 @@ import lombok.NoArgsConstructor;
 public class User {
     private String ip;
     private String name;
+
+    public String getUserKey() {
+        return this.ip + CommonConstant.UNDERLINE + this.name;
+    }
 }
