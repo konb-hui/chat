@@ -63,7 +63,13 @@ public class MyHandler extends TextWebSocketHandler {
             User user = getUserFromSession(session);
             if (user != null) {
                 chatMessage.setToUser(user);
-                sessions.get(chatName).sendMessage(new TextMessage(JSON.toJSONBytes(chatMessage)));
+                WebSocketSession chatGPT = sessions.get(chatName);
+                if (chatGPT != null) {
+                    chatGPT.sendMessage(new TextMessage(JSON.toJSONBytes(chatMessage)));
+                } else {
+                    chatMessage.setMessage("chatGPT暂时未上线");
+                    session.sendMessage(new TextMessage(JSON.toJSONBytes(chatMessage)));
+                }
             }
         }
         if (CommonConstant.GPT_ANSWER_MESSAGE == chatMessage.getType()) {
